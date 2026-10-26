@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/home-pt.png" alt="Tela inicial do Veenna Core" width="860">
+  <img src="docs/images/home-v4.7.1.png" alt="Tela inicial do Veenna Core" width="860">
 </p>
 
 ---
