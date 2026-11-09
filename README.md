@@ -22,8 +22,15 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/home-v4.7.2.png" alt="Tela inicial do Veenna Core" width="860">
+  <img src="docs/images/home-dark.png" alt="Tela inicial do Veenna Core, modo escuro" width="860">
 </p>
+
+<p align="center">
+  <img src="docs/images/home-light.png" alt="Tela inicial do Veenna Core, modo claro" width="420">
+  <img src="docs/images/docking-dark.png" alt="Tela de docking do Veenna Core" width="420">
+</p>
+
+<p align="center"><sub>Início e docking · modo escuro e modo claro · dados de demonstração</sub></p>
 
 ---
 
@@ -36,7 +43,10 @@ O **Veenna Core** prepara e executa docking molecular com o **AutoDock Vina** em
 - 🧪 **Até 2 ligantes em paralelo**, com progresso por ligante, um terminal para cada e cancelamento imediato.
 - 🎯 **Auto-Box:** centro e tamanho da caixa a partir do ligante co-cristalizado do PDB.
 - ⚗️ **Preparo de ligantes:** protonação no pH (Dimorphite-DL), conformações (RDKit) e otimização GFN2-xTB com água ou DFT (Psi4), além de MOPAC e OpenBabel, instalados pelo próprio programa.
-- 💊 **ADMET** no pré-docking, com desenho de ligantes no Ketcher.
+- 💊 **ADMET** no pré-docking, com desenho de ligantes no Ketcher, colar direto do ChemDraw e 41 previsões do ADMET-AI.
+- 🔬 **Dinâmica molecular** do complexo na placa de vídeo ou no processador, com MM/GBSA, interações ao longo do tempo, trajetória em 3D e exportação dos gráficos em CSV.
+- 🎨 **Modo claro e modo escuro**, no programa e no instalador.
+- 📄 **Relatório de métodos** pronto para artigo, em Word, com referências ABNT ou Vancouver.
 - 📊 **Resultados:** tabela de afinidades, gráfico comparativo, CSV para Excel, poses separadas em MOL2 e abertura no Discovery Studio.
 - 🌐 **Português e inglês**, no instalador e no programa.
 - 🔄 **Atualizações automáticas**, assinadas digitalmente e conferidas antes de instalar.
@@ -70,7 +80,10 @@ Componentes de terceiros (cada um sob a própria licença, todas de código aber
 - 🧪 **Up to 2 ligands in parallel**, with per-ligand progress, one terminal each and instant cancel.
 - 🎯 **Auto-Box:** box center and size from the PDB co-crystallized ligand.
 - ⚗️ **Ligand preparation:** pH protonation (Dimorphite-DL), conformers (RDKit) and GFN2-xTB optimization in water or DFT (Psi4), plus MOPAC and OpenBabel, installed by the program itself.
-- 💊 **ADMET** in pre-docking, with ligand drawing in Ketcher.
+- 💊 **ADMET** in pre-docking, with ligand drawing in Ketcher, pasting straight from ChemDraw and 41 ADMET-AI predictions.
+- 🔬 **Molecular dynamics** of the complex on the graphics card or the processor, with MM/GBSA, interactions over time, a 3D trajectory and CSV export of the charts.
+- 🎨 **Light and dark mode**, in the program and in the installer.
+- 📄 **Methods report** ready for a paper, in Word, with ABNT or Vancouver references.
 - 📊 **Results:** affinity table, comparison chart, CSV for Excel, poses split into MOL2 and Discovery Studio integration.
 - 🌐 **Portuguese and English**, in the installer and the program.
 - 🔄 **Automatic updates**, digitally signed and verified before installing.

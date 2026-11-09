@@ -4,65 +4,121 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Veenna Core · Docking molecular com AutoDock Vina</title>
-  <meta name="description" content="Veenna Core: docking molecular com AutoDock Vina em lote, para Windows 10 e 11.">
+  <meta name="description" content="Veenna Core: docking molecular com AutoDock Vina em lote, ADMET e dinâmica molecular, para Windows 10 e 11.">
   <link rel="icon" href="images/logo.png">
+  <meta property="og:title" content="Veenna Core">
+  <meta property="og:description" content="Docking molecular com AutoDock Vina em lote, sem linha de comando.">
+  <meta property="og:image" content="images/home-dark.png">
   <style>
+    /* Mesma paleta do programa: escuro por padrão, claro na troca de tema. */
     :root {
-      --bg: #1A2E33; --panel: #24424A; --border: #335C66; --petrol: #2D525A;
-      --gold: #DBB85F; --gold-hover: #E8CA7D; --text: #EEF2F1; --muted: #A9BEC3;
+      --bg:#1A2E33; --bar:#1F363C; --card:#24424A; --card-2:#2A4C55; --border:#335C66;
+      --gold:#DBB85F; --gold-hover:#E8CA7D; --on-gold:#1A2E33; --accent:#DBB85F;
+      --text:#EEF2F1; --muted:#A9BEC3; --shadow:0 18px 50px rgba(0,0,0,.38);
+      --hero:linear-gradient(135deg,#2D525A,#203B42 60%,#1C3237);
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; line-height: 1.6; }
-    a { color: var(--gold); }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
-    header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
-    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .5px; color: var(--gold); font-size: 20px; }
-    .brand img { width: 44px; height: 44px; border-radius: 10px; }
-    .lang button { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 16px; padding: 4px 12px; cursor: pointer; font: inherit; font-size: 13px; }
-    .lang button.on { background: var(--gold); border-color: var(--gold); color: var(--bg); font-weight: 600; }
-    .hero { background: linear-gradient(135deg, #2D525A, #203B42 60%, #1C3237); border: 1px solid var(--border); border-radius: 18px;
-            padding: 44px 36px; display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; }
-    .hero h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.2; margin: 6px 0 12px; }
-    .eyebrow { color: var(--gold); font-weight: 600; font-size: 13px; letter-spacing: .6px; }
-    .hero p { color: var(--muted); font-size: 17px; max-width: 620px; margin: 0; }
-    .hero img { width: 150px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
-    .cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; background: var(--gold); color: var(--bg);
-           padding: 14px 24px; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 16px; }
-    .cta:hover { background: var(--gold-hover); }
-    .meta { color: var(--muted); font-size: 13px; margin-top: 10px; }
-    .shot { margin: 36px 0; border-radius: 14px; border: 1px solid var(--border); width: 100%; height: auto; display: block; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 24px 0 40px; }
-    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
-    .card h3 { margin: 6px 0; font-size: 16px; }
-    .card p { margin: 0; color: var(--muted); font-size: 14px; }
-    .icon { font-size: 22px; }
-    h2 { margin-top: 48px; }
-    footer { color: var(--muted); font-size: 13px; padding: 40px 0; text-align: center; }
-    @media (max-width: 640px) { .hero { grid-template-columns: 1fr; padding: 28px 20px; } .hero img { width: 96px; } }
+    html[data-theme="light"] {
+      --bg:#F5F7F7; --bar:#EAEFF0; --card:#FFFFFF; --card-2:#F0F4F5; --border:#CBD8DB;
+      --gold:#9A7A1E; --gold-hover:#B08D2B; --on-gold:#FFFFFF; --accent:#1C6E5E;
+      --text:#17262A; --muted:#6B848A; --shadow:0 18px 50px rgba(23,38,42,.12);
+      --hero:linear-gradient(135deg,#DFEAEC,#EFF3F4 60%,#F5F7F7);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--bg); color:var(--text); line-height:1.6;
+           font-family:"Segoe UI", system-ui, -apple-system, sans-serif; }
+    a { color:var(--gold); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .wrap { max-width:1120px; margin:0 auto; padding:0 20px; }
+
+    /* Barra do topo, no tom do menu de etapas do programa */
+    .topbar { background:var(--bar); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:20; }
+    .topbar .wrap { display:flex; align-items:center; gap:14px; height:58px; }
+    .brand { display:flex; align-items:center; gap:11px; font-weight:700; letter-spacing:.4px; font-size:16px; }
+    .brand img { width:28px; height:28px; border-radius:8px; }
+    .brand span { color:var(--text); }
+    .brand i { font-style:normal; color:var(--muted); font-weight:400; }
+    .tools { margin-left:auto; display:flex; align-items:center; gap:8px; }
+    .chip { background:transparent; border:1px solid var(--border); color:var(--muted); border-radius:999px;
+            padding:5px 12px; cursor:pointer; font:inherit; font-size:12.5px; line-height:1; }
+    .chip:hover { border-color:var(--gold); color:var(--text); }
+    .chip.on { background:var(--gold); border-color:var(--gold); color:var(--on-gold); font-weight:600; }
+    .seg { display:inline-flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; }
+    .seg button { background:transparent; border:0; color:var(--muted); padding:6px 13px; cursor:pointer; font:inherit; font-size:12.5px; }
+    .seg button.on { background:var(--gold); color:var(--on-gold); font-weight:600; }
+
+    /* Herói */
+    .hero { background:var(--hero); border:1px solid var(--border); border-radius:18px; margin-top:28px;
+            padding:44px 40px; display:grid; grid-template-columns:1fr auto; gap:30px; align-items:center; }
+    .eyebrow { color:var(--accent); font-weight:700; font-size:12.5px; letter-spacing:.9px; }
+    .hero h1 { font-size:clamp(28px,4vw,40px); line-height:1.18; margin:8px 0 14px; }
+    .hero p { color:var(--muted); font-size:17px; max-width:640px; margin:0; }
+    .hero img { width:138px; border-radius:30px; box-shadow:var(--shadow); }
+    .cta { display:inline-flex; align-items:center; gap:10px; margin-top:26px; background:var(--gold); color:var(--on-gold);
+           padding:14px 26px; border-radius:10px; font-weight:700; font-size:16px; }
+    .cta:hover { background:var(--gold-hover); text-decoration:none; }
+    .meta { color:var(--muted); font-size:13px; margin-top:12px; }
+
+    /* Telas do programa */
+    figure { margin:40px 0 10px; }
+    .shot { width:100%; height:auto; display:block; border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); }
+    figcaption { color:var(--muted); font-size:13px; text-align:center; margin-top:10px; }
+
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); gap:16px; margin:26px 0 44px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px 22px; }
+    .card h3 { margin:8px 0 6px; font-size:16px; }
+    .card p { margin:0; color:var(--muted); font-size:14px; }
+    .icon { font-size:22px; line-height:1; }
+
+    h2 { margin:52px 0 10px; font-size:24px; }
+    h2 + p { margin-top:0; }
+    p { color:var(--muted); }
+    .note { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; font-size:14px; }
+    .note p:last-child { margin-bottom:0; }
+    ol { color:var(--muted); }
+    ol b, p b, .note b { color:var(--text); }
+    footer { color:var(--muted); font-size:13px; padding:44px 0; text-align:center; border-top:1px solid var(--border); margin-top:54px; }
+    @media (max-width:680px) {
+      .hero { grid-template-columns:1fr; padding:30px 22px; }
+      .hero img { width:96px; }
+      .brand i { display:none; }
+    }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="brand"><img src="images/logo.png" alt=""> VEENNA CORE</div>
-    <div class="lang"><button id="bt-pt" class="on">PT</button> <button id="bt-en">EN</button></div>
-  </header>
 
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand"><img src="images/logo.png" alt=""> <span>Veenna Core</span> <i>·</i>
+      <i data-pt="Docking molecular" data-en="Molecular docking"></i></div>
+    <div class="tools">
+      <button class="chip" id="bt-theme" title="Claro / escuro"></button>
+      <span class="seg"><button id="bt-pt">PT</button><button id="bt-en">EN</button></span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
   <section class="hero">
     <div>
       <div class="eyebrow" data-pt="DOCKING MOLECULAR · AUTODOCK VINA" data-en="MOLECULAR DOCKING · AUTODOCK VINA"></div>
       <h1 data-pt="Docking molecular em lote, sem linha de comando" data-en="Batch molecular docking, no command line"></h1>
-      <p data-pt="Carregue o receptor, monte a fila de ligantes, defina a caixa de busca e acompanhe cada ligante em tempo real. O AutoDock Vina é baixado e executado automaticamente."
-         data-en="Load the receptor, queue the ligands, set the search box and follow every ligand in real time. AutoDock Vina is downloaded and run automatically."></p>
+      <p data-pt="Carregue o receptor, monte a fila de ligantes, defina a caixa de busca e acompanhe cada ligante em tempo real. Depois do docking, siga para ADMET, interações em 2D e 3D e dinâmica molecular — tudo no mesmo programa."
+         data-en="Load the receptor, queue the ligands, set the search box and follow every ligand in real time. After docking, move on to ADMET, 2D and 3D interactions and molecular dynamics — all in the same program."></p>
       <a class="cta" id="download" href="https://github.com/thgdsrbrANJOS/veenna-core-releases/releases/latest">
         ⬇ <span data-pt="Baixar para Windows" data-en="Download for Windows"></span>
       </a>
-      <div class="meta" id="meta" data-pt="Windows 10 e 11 · 5 dias grátis com todos os recursos" data-en="Windows 10 and 11 · 5 days free with every feature"></div>
+      <div class="meta" id="meta" data-pt="Windows 10 e 11 · 5 dias grátis com todos os recursos"
+           data-en="Windows 10 and 11 · 5 days free with every feature"></div>
     </div>
     <img src="images/logo.png" alt="Veenna Core">
   </section>
 
-  <img class="shot" src="images/home-v4.7.2.png" alt="Veenna Core">
+  <figure>
+    <img class="shot" id="shot-home" src="images/home-dark.png" alt="Veenna Core">
+    <figcaption data-pt="Início: onde a sessão está, o que está rodando e os últimos resultados. O programa acompanha o tema claro ou escuro."
+                data-en="Home: where the session stands, what is running and the latest results. The program follows the light or dark theme."></figcaption>
+  </figure>
 
   <div class="grid">
     <div class="card"><div class="icon">⚙️</div><h3 data-pt="Vina automático" data-en="Automatic Vina"></h3>
@@ -72,50 +128,99 @@
     <div class="card"><div class="icon">🎯</div><h3>Auto-Box</h3>
       <p data-pt="Centro e tamanho da caixa a partir do ligante do cristal." data-en="Box center and size from the crystal ligand."></p></div>
     <div class="card"><div class="icon">⚗️</div><h3 data-pt="Preparo de ligantes" data-en="Ligand preparation"></h3>
-      <p data-pt="Protonação no pH, conformações e otimização GFN2-xTB ou DFT (Psi4), além de MOPAC e OpenBabel." data-en="pH protonation, conformers and GFN2-xTB or DFT (Psi4) optimization, plus MOPAC and OpenBabel."></p></div>
+      <p data-pt="Protonação no pH, conformações e otimização GFN2-xTB ou DFT (Psi4), além de MOPAC e OpenBabel."
+         data-en="pH protonation, conformers and GFN2-xTB or DFT (Psi4) optimization, plus MOPAC and OpenBabel."></p></div>
+    <div class="card"><div class="icon">💊</div><h3 data-pt="ADMET e desenho" data-en="ADMET and drawing"></h3>
+      <p data-pt="Desenhe o ligante no Ketcher, cole do ChemDraw e veja as propriedades na hora, com 41 previsões do ADMET-AI."
+         data-en="Draw the ligand in Ketcher, paste from ChemDraw and see the properties right away, with 41 ADMET-AI predictions."></p></div>
+    <div class="card"><div class="icon">🔬</div><h3 data-pt="Dinâmica molecular" data-en="Molecular dynamics"></h3>
+      <p data-pt="Simule o complexo na placa de vídeo ou no processador, com MM/GBSA, interações ao longo do tempo e trajetória em 3D."
+         data-en="Simulate the complex on the graphics card or the processor, with MM/GBSA, interactions over time and a 3D trajectory."></p></div>
     <div class="card"><div class="icon">📊</div><h3 data-pt="Resultados" data-en="Results"></h3>
-      <p data-pt="Tabela, gráfico, CSV para Excel, poses em MOL2 e Discovery Studio." data-en="Table, chart, CSV for Excel, MOL2 poses and Discovery Studio."></p></div>
+      <p data-pt="Tabela, gráfico, planilha, diagrama 2D, poses em MOL2 e Discovery Studio."
+         data-en="Table, chart, spreadsheet, 2D diagram, MOL2 poses and Discovery Studio."></p></div>
+    <div class="card"><div class="icon">📄</div><h3 data-pt="Relatório de métodos" data-en="Methods report"></h3>
+      <p data-pt="Texto pronto para artigo, em Word, com as referências no estilo ABNT ou Vancouver."
+         data-en="Paper-ready text, in Word, with references in ABNT or Vancouver style."></p></div>
     <div class="card"><div class="icon">🔄</div><h3 data-pt="Atualizações seguras" data-en="Secure updates"></h3>
-      <p data-pt="Atualizações automáticas, assinadas digitalmente e conferidas antes de instalar." data-en="Automatic updates, digitally signed and verified before installing."></p></div>
+      <p data-pt="Automáticas, assinadas digitalmente e conferidas antes de instalar."
+         data-en="Automatic, digitally signed and verified before installing."></p></div>
   </div>
+
+  <figure>
+    <img class="shot" id="shot-docking" src="images/docking-dark.png" alt="Docking">
+    <figcaption data-pt="Docking: a lista de verificação, os parâmetros do Vina e o terminal de execução de cada ligante."
+                data-en="Docking: the checklist, the Vina parameters and the execution terminal of each ligand."></figcaption>
+  </figure>
+
+  <h2 data-pt="Instalação" data-en="Installation"></h2>
+  <ol>
+    <li data-pt="Baixe o instalador na página de versões." data-en="Download the installer from the releases page."></li>
+    <li data-pt="Execute-o e escolha o idioma e a aparência." data-en="Run it and choose the language and appearance."></li>
+    <li data-pt="Use gratuitamente por 5 dias, com todos os recursos." data-en="Use it free for 5 days, with every feature."></li>
+  </ol>
 
   <h2 data-pt="Comprar uma licença" data-en="Buy a license"></h2>
   <p data-pt="Abra a tela Licença dentro do programa: lá estão os canais de contato e o seu ID de hardware. Você recebe um arquivo .lic e é só arrastá-lo para a tela de ativação."
      data-en="Open the License screen inside the program: it shows the contact channels and your hardware ID. You will receive a .lic file; just drop it on the activation screen."></p>
 
   <h2 data-pt="Licenças e termos de uso" data-en="Licenses and terms of use"></h2>
-  <p data-pt="O Veenna Core é software proprietário, com avaliação gratuita de 5 dias a partir do primeiro uso. Os termos completos aparecem no instalador e devem ser aceitos antes da instalação: licença pessoal e intransferível, vinculada ao computador; resultados de docking, protonação, otimização e ADMET são estimativas computacionais para pesquisa, sem garantia e sem uso clínico; o programa não envia suas moléculas nem dados pessoais."
-     data-en="Veenna Core is proprietary software, with a 5-day free evaluation from the first use. The full terms are shown in the installer and must be accepted before installing: personal, non-transferable license bound to the computer; docking, protonation, optimization and ADMET results are computational estimates for research, with no warranty and no clinical use; the program does not send your molecules or personal data."></p>
-  <p data-pt="Componentes de terceiros, cada um sob a própria licença (todas de código aberto e com uso comercial permitido): Ketcher (Apache 2.0), OpenChemLib JS e 3Dmol.js (BSD 3-Clause), .NET e QRCoder (MIT), WebView2 SDK (Microsoft); baixados das fontes oficiais quando você pede: AutoDock Vina e MOPAC (Apache 2.0), Open Babel (GPL 2.0, sem modificações), PROPKA (LGPL 2.1), OpenMM/PDBFixer (MIT), ADMET-AI (MIT), RDKit (BSD), xtb/GFN2-xTB (LGPL 3.0), Dimorphite-DL (Apache 2.0), Psi4 e simple-dftd3 (LGPL 3.0), instalados pelo micromamba (BSD) a partir do conda-forge. Dados: RCSB PDB (CC0), AlphaFold DB (CC BY 4.0) e percentil DrugBank do ADMET-AI (CC BY-NC 4.0). Texto completo no programa, em Ferramentas e ajustes."
-     data-en="Third-party components, each under its own license (all open source and allowing commercial use): Ketcher (Apache 2.0), OpenChemLib JS and 3Dmol.js (BSD 3-Clause), .NET and QRCoder (MIT), WebView2 SDK (Microsoft); downloaded from the official sources when you ask: AutoDock Vina and MOPAC (Apache 2.0), Open Babel (GPL 2.0, unmodified), PROPKA (LGPL 2.1), OpenMM/PDBFixer (MIT), ADMET-AI (MIT), RDKit (BSD), xtb/GFN2-xTB (LGPL 3.0), Dimorphite-DL (Apache 2.0), Psi4 and simple-dftd3 (LGPL 3.0), installed by micromamba (BSD) from conda-forge. Data: RCSB PDB (CC0), AlphaFold DB (CC BY 4.0) and the ADMET-AI DrugBank percentile (CC BY-NC 4.0). Full text inside the program, in Tools and settings."></p>
+  <div class="note">
+    <p data-pt="O Veenna Core é software proprietário, com avaliação gratuita de 5 dias a partir do primeiro uso. Os termos completos aparecem no instalador e devem ser aceitos antes da instalação: licença pessoal e intransferível, vinculada ao computador; resultados de docking, protonação, otimização, ADMET e dinâmica são estimativas computacionais para pesquisa, sem garantia e sem uso clínico; o programa não envia suas moléculas nem dados pessoais."
+       data-en="Veenna Core is proprietary software, with a 5-day free evaluation from the first use. The full terms are shown in the installer and must be accepted before installing: personal, non-transferable license bound to the computer; docking, protonation, optimization, ADMET and dynamics results are computational estimates for research, with no warranty and no clinical use; the program does not send your molecules or personal data."></p>
+    <p data-pt="Componentes de terceiros, cada um sob a própria licença (todas de código aberto e com uso comercial permitido): Ketcher (Apache 2.0), OpenChemLib JS e 3Dmol.js (BSD 3-Clause), .NET e QRCoder (MIT), WebView2 SDK (Microsoft); baixados das fontes oficiais quando você pede: AutoDock Vina e MOPAC (Apache 2.0), Open Babel (GPL 2.0, sem modificações), PROPKA (LGPL 2.1), OpenMM/PDBFixer (MIT), ADMET-AI (MIT), RDKit (BSD), xtb/GFN2-xTB (LGPL 3.0), Dimorphite-DL (Apache 2.0), Psi4 e simple-dftd3 (LGPL 3.0), OpenFF Toolkit (MIT) e MDTraj (LGPL 2.1), instalados pelo micromamba (BSD) a partir do conda-forge. Dados: RCSB PDB (CC0), AlphaFold DB (CC BY 4.0) e percentil DrugBank do ADMET-AI (CC BY-NC 4.0). Texto completo no programa, em Ferramentas e ajustes."
+       data-en="Third-party components, each under its own license (all open source and allowing commercial use): Ketcher (Apache 2.0), OpenChemLib JS and 3Dmol.js (BSD 3-Clause), .NET and QRCoder (MIT), WebView2 SDK (Microsoft); downloaded from the official sources when you ask: AutoDock Vina and MOPAC (Apache 2.0), Open Babel (GPL 2.0, unmodified), PROPKA (LGPL 2.1), OpenMM/PDBFixer (MIT), ADMET-AI (MIT), RDKit (BSD), xtb/GFN2-xTB (LGPL 3.0), Dimorphite-DL (Apache 2.0), Psi4 and simple-dftd3 (LGPL 3.0), OpenFF Toolkit (MIT) and MDTraj (LGPL 2.1), installed by micromamba (BSD) from conda-forge. Data: RCSB PDB (CC0), AlphaFold DB (CC BY 4.0) and the ADMET-AI DrugBank percentile (CC BY-NC 4.0). Full text inside the program, in Tools and settings."></p>
+    <p data-pt="Os formatos de arquivo e de área de transferência (molfile/SDF, SMILES, MDLCT, CDX e CDXML, PDB, PDBQT, MOL2) são lidos e escritos por implementação própria, a partir das especificações públicas. ChemDraw é marca da Revvity; MarvinSketch, da Chemaxon; BIOVIA e Discovery Studio, da Dassault Systèmes. O Veenna Core não tem vínculo com essas empresas: os nomes indicam apenas compatibilidade."
+       data-en="File and clipboard formats (molfile/SDF, SMILES, MDLCT, CDX and CDXML, PDB, PDBQT, MOL2) are read and written by our own implementation, from each format's public specification. ChemDraw is a trademark of Revvity; MarvinSketch of Chemaxon; BIOVIA and Discovery Studio of Dassault Systèmes. Veenna Core is not affiliated with these companies: the names only indicate compatibility."></p>
+  </div>
 
-  <footer>© 2026 Thiago Anjos · <span data-pt="Os componentes de terceiros pertencem aos seus autores e seguem as próprias licenças." data-en="Third-party components belong to their authors and follow their own licenses."></span></footer>
+  <footer>© 2026 Thiago Anjos ·
+    <span data-pt="Os componentes de terceiros pertencem aos seus autores e seguem as próprias licenças."
+          data-en="Third-party components belong to their authors and follow their own licenses."></span>
+  </footer>
 </div>
 
 <script>
-  // Idioma
-  function setLang(lang) {
+  // ---------- tema: segue o Windows e fica guardado na troca ----------
+  const prefereClaro = () => window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+  let tema = null;
+  try { tema = localStorage.getItem("tema"); } catch (e) {}
+  function aplicarTema(t) {
+    tema = t;
+    document.documentElement.dataset.theme = t;
+    document.getElementById("bt-theme").textContent = t === "light" ? "☾" : "☀";
+    for (const [id, base] of [["shot-home", "home"], ["shot-docking", "docking"]])
+      document.getElementById(id).src = "images/" + base + "-" + (t === "light" ? "light" : "dark") + ".png";
+    try { localStorage.setItem("tema", t); } catch (e) {}
+  }
+  document.getElementById("bt-theme").onclick = () => aplicarTema(tema === "light" ? "dark" : "light");
+
+  // ---------- idioma ----------
+  function aplicarIdioma(lang) {
     document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
-    document.querySelectorAll("[data-pt]").forEach(el => el.textContent = el.dataset[lang]);
+    document.querySelectorAll("[data-pt]").forEach(el => { el.textContent = el.dataset[lang]; });
     document.getElementById("bt-pt").classList.toggle("on", lang === "pt");
     document.getElementById("bt-en").classList.toggle("on", lang === "en");
     try { localStorage.setItem("lang", lang); } catch (e) {}
-    updateMeta();
+    atualizarVersao();
   }
   let release = null;
-  function updateMeta() {
+  function atualizarVersao() {
     if (!release) return;
     const en = document.documentElement.lang === "en";
     document.getElementById("meta").textContent = (en ? "Version " : "Versão ") + release.tag_name.replace(/^v/, "") +
       " · Windows 10/11 · " + (en ? "5 days free" : "5 dias grátis");
   }
-  document.getElementById("bt-pt").onclick = () => setLang("pt");
-  document.getElementById("bt-en").onclick = () => setLang("en");
-  let saved = null;
-  try { saved = localStorage.getItem("lang"); } catch (e) {}
-  setLang(saved || (navigator.language || "pt").toLowerCase().startsWith("pt") ? (saved || "pt") : "en");
+  document.getElementById("bt-pt").onclick = () => aplicarIdioma("pt");
+  document.getElementById("bt-en").onclick = () => aplicarIdioma("en");
 
-  // Link direto para o instalador da versão mais recente
+  let idioma = null;
+  try { idioma = localStorage.getItem("lang"); } catch (e) {}
+  if (!idioma) idioma = (navigator.language || "pt").toLowerCase().startsWith("pt") ? "pt" : "en";
+  aplicarTema(tema || (prefereClaro() ? "light" : "dark"));
+  aplicarIdioma(idioma);
+
+  // ---------- link direto para o instalador da versão mais recente ----------
   fetch("https://api.github.com/repos/thgdsrbrANJOS/veenna-core-releases/releases/latest")
     .then(r => r.ok ? r.json() : null)
     .then(data => {
@@ -123,7 +228,7 @@
       const asset = (data.assets || []).find(a => /\.exe$/i.test(a.name));
       if (asset) document.getElementById("download").href = asset.browser_download_url;
       release = data;
-      updateMeta();
+      atualizarVersao();
     })
     .catch(() => {});
 </script>
